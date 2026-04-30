@@ -1,6 +1,7 @@
+-- Indiquer explicitement la base de données à utiliser sur Aiven
 USE defaultdb;
 
--- On crée les tables d'abord
+-- 1. Création de la table des utilisateurs
 CREATE TABLE IF NOT EXISTS utilisateurs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom_utilisateur VARCHAR(50) NOT NULL UNIQUE,
@@ -9,26 +10,34 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 2. Création de la table des questions
 CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     libelle_question TEXT NOT NULL,
     type_reponse ENUM('texte', 'nombre', 'choix_multiple') DEFAULT 'texte'
 );
 
+-- 3. Création de la table des réponses (Adaptée au formulaire UY1)
 CREATE TABLE IF NOT EXISTS reponses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question_id INT,
     contenu_reponse TEXT,
     collecteur_id INT,
+    sexe VARCHAR(20),
+    niveau VARCHAR(50),
+    etablissement VARCHAR(100),
+    restaurant VARCHAR(100),
+    note_qualite INT,
     date_reponse TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_question FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 
--- Ensuite on insère les données
+-- 4. Insertion d'un compte administrateur par défaut (admin / admin123)
 INSERT IGNORE INTO utilisateurs (nom_utilisateur, mot_de_passe, role) 
 VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
+-- 5. Insertion de quelques questions de test pour l'UY1
 INSERT IGNORE INTO questions (libelle_question, type_reponse) VALUES 
-('Quel est votre quartier de résidence ?', 'texte'),
-('Nombre de personnes dans le foyer ?', 'nombre'),
-('Niveau de satisfaction (1 à 5) ?', 'nombre');
+('Quel restaurant fréquentez-vous ?', 'choix_multiple'),
+('Note de qualité (1 à 5) ?', 'nombre'),
+('Commentaires supplémentaires', 'texte');
