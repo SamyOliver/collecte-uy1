@@ -1,13 +1,14 @@
 <?php
-// Emplacement : C:\xampp\htdocs\collecte_uy1\config\db.php
+// Emplacement : config/db.php
+$host = 'mysql-1e74f5ad-stivofolefacknanfack-ecde.l.aivencloud.com'; 
+$port = '13763'; // Le port que tu as sur Aiven
+$db   = 'defaultdb';
+$user = 'avnadmin';
 
-$host = 'localhost';
-$db   = 'collecte_uy1_db';
-$user = 'root';
-$pass = '';
-$charset = 'utf8mb4';
+// LA LIGNE MAGIQUE : Le mot de passe n'est plus écrit dans le code !
+$pass = getenv('DB_PASS'); 
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -17,7 +18,6 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    // Message d'erreur propre
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
+    die("Erreur de connexion : " . $e->getMessage());
 }
 ?>
