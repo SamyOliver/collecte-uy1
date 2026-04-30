@@ -1,0 +1,34 @@
+USE defaultdb;
+
+-- On crée les tables d'abord
+CREATE TABLE IF NOT EXISTS utilisateurs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom_utilisateur VARCHAR(50) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'collecteur') DEFAULT 'collecteur',
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    libelle_question TEXT NOT NULL,
+    type_reponse ENUM('texte', 'nombre', 'choix_multiple') DEFAULT 'texte'
+);
+
+CREATE TABLE IF NOT EXISTS reponses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT,
+    contenu_reponse TEXT,
+    collecteur_id INT,
+    date_reponse TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_question FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+);
+
+-- Ensuite on insère les données
+INSERT IGNORE INTO utilisateurs (nom_utilisateur, mot_de_passe, role) 
+VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+
+INSERT IGNORE INTO questions (libelle_question, type_reponse) VALUES 
+('Quel est votre quartier de résidence ?', 'texte'),
+('Nombre de personnes dans le foyer ?', 'nombre'),
+('Niveau de satisfaction (1 à 5) ?', 'nombre');
